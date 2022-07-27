@@ -7,6 +7,7 @@ class MyGame extends Phaser.Scene
     super();
     this.platforms = null;
     this.player = null;
+    this.cursors = null;
   }
 
   /**
@@ -97,7 +98,32 @@ class MyGame extends Phaser.Scene
       }),
       frameRate: 10,
       repeat: -1,
-    })
+    });
+
+    /**
+     * 键盘管理函数
+     * 这里把四个属性：up, down, left, right植入光标(cursor)对象
+     */
+    this.cursors = this.input.keyboard.createCursorKeys();
+  }
+
+  /**
+   * 更新函数，是一个循环
+   */
+  update() {
+    if (this.cursors.left.isDown) {
+      this.player.setVelocityX(-160);
+      this.player.anims.play('left', true);
+    } else if (this.cursors.right.isDown) {
+      this.player.setVelocityX(160);
+      this.player.anims.play('right', true);
+    } else {
+      this.player.setVelocityX(0);
+      this.player.anims.play('turn');
+    }
+    if (this.cursors.up.isDown && this.player.body.touching.down) {
+      this.player.setVelocityY(-500);
+    }
   }
 }
 
