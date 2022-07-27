@@ -10,6 +10,8 @@ class MyGame extends Phaser.Scene
     this.cursors = null;
     this.score = 0;
     this.scoreText = null;
+    this.stars = null;
+    this.bombs = null;
   }
 
   /**
@@ -50,7 +52,7 @@ class MyGame extends Phaser.Scene
     /**
      * 创建一组星星
      */
-    const stars = this.physics.add.group({
+    this.stars = this.physics.add.group({
       key: 'star', // 纹理，使用星星image的key
       repeat: 11, // 再重复11次，即12颗星星
       setXY: {
@@ -59,7 +61,7 @@ class MyGame extends Phaser.Scene
         stepX: 70, // 步长，从第二颗星星开始距离前一颗的移动位置
       }
     });
-    stars.children.iterate((child) => {
+    this.stars.children.iterate((child) => {
       child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
     });
 
@@ -90,9 +92,16 @@ class MyGame extends Phaser.Scene
      * 它接收两个对象，检测二者之间的碰撞，并使二者分开
      */
     this.physics.add.collider(this.player, this.platforms);
-    this.physics.add.collider(stars, this.platforms);
+    this.physics.add.collider(this.stars, this.platforms);
     // 判断星星与玩家是否重叠
-    this.physics.add.overlap(this.player, stars, this.collectStar, null, this);
+    this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
+
+    /**
+     * 创建一组反派
+     */
+    this.bombs = this.physics.add.group();
+    this.physics.add.collider(this.bombs, this.platforms);
+    this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
 
     /**
      * 在Phaser 3 中，动画管理器（Animation Manager）是全局系统。
@@ -160,6 +169,28 @@ class MyGame extends Phaser.Scene
 
     this.score += 10;
     this.scoreText.setText('Score: ' + this.score);
+
+    // group.countActive()方法检测还剩多少星星
+    if (this.stars.countActive(true) === 0) {
+      this.stars.children.iterate(child => {
+        child.enableBody(true, child.x, 0, true, true);
+      });
+      let x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
+      let bomb = this.bombs.create(x, 16, 'bomb');
+      bomb.setBounce(1);
+      bomb.setCollideWorldBounds(true);
+      bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+    }
+  }
+
+  /**
+   * 当玩家与反派碰撞检测
+   */
+  hitBomb(player, bomb) {
+    this.physics.pause();
+    player.setTint(0xff0000);
+    player.anims.play('turn');
+    gameOver = true;
   }
 }
 
