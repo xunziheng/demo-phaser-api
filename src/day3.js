@@ -8,8 +8,6 @@ class MyGame extends Phaser.Scene
     this.platforms = null;
     this.player = null;
     this.cursors = null;
-    this.score = 0;
-    this.scoreText = null;
   }
 
   /**
@@ -38,14 +36,6 @@ class MyGame extends Phaser.Scene
      */
     const sky = this.add.image(0, 0, 'sky');
     sky.setOrigin(0, 0);
-
-    /**
-     * 未指定fontfamily，使用Phaser默认的，即Courier
-     */
-    this.scoreText = this.add.text(16, 16, 'Score: 0', {
-      fontSize: '32px',
-      fill: '#000',
-    });
 
     /**
      * 创建一组星星
@@ -157,9 +147,6 @@ class MyGame extends Phaser.Scene
    */
   collectStar(player, star) {
     star.disableBody(true, true);
-
-    this.score += 10;
-    this.scoreText.setText('Score: ' + this.score);
   }
 }
 
