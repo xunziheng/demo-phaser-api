@@ -6,6 +6,7 @@ class MyGame extends Phaser.Scene
   constructor () {
     super();
     this.platforms = null;
+    this.player = null;
   }
 
   /**
@@ -51,6 +52,43 @@ class MyGame extends Phaser.Scene
     this.platforms.create(600, 400, 'ground');
     this.platforms.create(50, 250, 'ground');
     this.platforms.create(750, 220, 'ground');
+
+    // 生成一个物理精灵
+    this.player = this.physics.add.sprite(100, 450, 'dude');
+    this.player.setBounce(0.2);
+    this.player.setCollideWorldBounds(true);
+
+    /**
+     * 在Phaser 3 中，动画管理器（Animation Manager）是全局系统。
+     * 其中生成的动画是全局变量，所有游戏对象都能用到它们。
+     * 它们分享基础的动画数据，同时管理自己的时间轴（timeline）。
+     * 这就使我们能够在某时定义一个动画，却可以应用到任意多的游戏对象上。
+     * 这有别于Phaser 2，那时动画只属于据以生成动画的特定游戏对象。
+     */
+    this.anims.create({
+      key: 'left',
+      frames: this.anims.generateFrameNumbers('dude', {
+        start: 0, end: 3 // left动画使用精灵表单dude的0-3帧
+      }),
+      frameRate: 10, // 帧率，每秒10帧
+      repeat: -1, // 动画循环播放
+    });
+    this.anims.create({
+      key: 'turn',
+      frames: [{
+        key: 'dude', frame: 4
+      }],
+      frameRate: 20,
+    });
+    this.anims.create({
+      key: 'right',
+      frames: this.anims.generateFrameNumbers('dude', {
+        start: 5,
+        end: 8,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    })
   }
 }
 
