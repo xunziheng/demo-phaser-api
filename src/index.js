@@ -37,8 +37,21 @@ class MyGame extends Phaser.Scene
     const sky = this.add.image(0, 0, 'sky');
     sky.setOrigin(0, 0);
 
-    // 按顺序后面的图层会比前面的高，添加星星
-    const stars = this.add.image(400, 300, 'star');
+    /**
+     * 创建一组星星
+     */
+    const stars = this.physics.add.group({
+      key: 'star', // 纹理，使用星星image的key
+      repeat: 11, // 再重复11次，即12颗星星
+      setXY: {
+        x: 12,
+        y: 0, // 第一颗星星的位置
+        stepX: 70, // 步长，从第二颗星星开始距离前一颗的移动位置
+      }
+    });
+    stars.children.iterate((child) => {
+      child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+    });
 
     /**
      * 生成一个静态物理组
@@ -67,6 +80,9 @@ class MyGame extends Phaser.Scene
      * 它接收两个对象，检测二者之间的碰撞，并使二者分开
      */
     this.physics.add.collider(this.player, this.platforms);
+    this.physics.add.collider(stars, this.platforms);
+    // 判断星星与玩家是否重叠
+    this.physics.add.overlap(this.player, stars, this.collectStar, null, this);
 
     /**
      * 在Phaser 3 中，动画管理器（Animation Manager）是全局系统。
@@ -124,6 +140,13 @@ class MyGame extends Phaser.Scene
     if (this.cursors.up.isDown && this.player.body.touching.down) {
       this.player.setVelocityY(-500);
     }
+  }
+
+  /**
+   * 星星和玩家重叠检测回调方法
+   */
+  collectStar(player, star) {
+    star.disableBody(true, true);
   }
 }
 
