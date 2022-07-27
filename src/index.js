@@ -57,6 +57,15 @@ class MyGame extends Phaser.Scene
     this.player = this.physics.add.sprite(100, 450, 'dude');
     this.player.setBounce(0.2);
     this.player.setCollideWorldBounds(true);
+    // 在精灵上模拟重力的效果
+    this.player.body.setGravityY(300);
+
+    /**
+     * 玩家与地面的碰撞
+     * 利用碰撞器(Collider)
+     * 它接收两个对象，检测二者之间的碰撞，并使二者分开
+     */
+    this.physics.add.collider(this.player, this.platforms);
 
     /**
      * 在Phaser 3 中，动画管理器（Animation Manager）是全局系统。
