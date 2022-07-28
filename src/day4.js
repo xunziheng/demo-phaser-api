@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import {imgAssets} from './assets';
+import { imgAssets, jsonAssets } from './assets';
 
 class MyGame extends Phaser.Scene
 {
@@ -12,6 +12,8 @@ class MyGame extends Phaser.Scene
     this.scoreText = null;
     this.stars = null;
     this.bombs = null;
+
+    this.move = 0;
   }
 
   /**
@@ -27,7 +29,9 @@ class MyGame extends Phaser.Scene
     // 精灵表单sprite sheet，不同于image资源
     this.load.spritesheet('dude', imgAssets.dudeImg, {
       frameWidth: 32, frameHeight: 48
-    })
+    });
+
+    this.load.atlas('atlas', imgAssets.vegImg, jsonAssets.vegJson);
   }
   
   /**
@@ -140,6 +144,32 @@ class MyGame extends Phaser.Scene
      * 这里把四个属性：up, down, left, right植入光标(cursor)对象
      */
     this.cursors = this.input.keyboard.createCursorKeys();
+
+    /**
+     * 练习Phaser.Actions
+     */
+    const gridAlign = this.add.group({
+      key: 'dude',
+      frame: [0, 1, 2, 3, 4, 5, 6, 7 ,8], // 精灵图中有几帧
+      frameQuantity: 9, // 每个精灵重复几个帧数
+    });
+    Phaser.Actions.GridAlign(gridAlign.getChildren(), {
+      width: 9,
+      height: 9,
+      cellWidth: 32,
+      cellHeight: 48,
+      x: 100,
+      y: 100,
+    });
+
+    this.groupA = this.add.group();
+    this.groupB = this.add.group();
+    for (let i = 0; i < 1000; i++) {
+      this.groupA.create(100 + Math.random() * 800, 100 + Math.random() * 600, 'atlas', 'veg0' + Math.floor(1 + Math.random() * 9));
+    }
+    for (var i = 0; i < 1000; i++) {
+      this.groupB.create(100 + Math.random() * 600, 100 + Math.random() * 400, 'atlas', 'veg0' + Math.floor(1 + Math.random() * 9));
+    }
   }
 
   /**
@@ -159,6 +189,16 @@ class MyGame extends Phaser.Scene
     if (this.cursors.up.isDown && this.player.body.touching.down) {
       this.player.setVelocityY(-500);
     }
+
+    Phaser.Actions.IncX(this.groupA.getChildren(), Math.cos(this.move));
+    Phaser.Actions.IncY(this.groupA.getChildren(), Math.cos(this.move));
+    Phaser.Actions.Rotate(this.groupA.getChildren(), -0.01);
+
+    Phaser.Actions.IncX(this.groupB.getChildren(), -Math.cos(this.move));
+    Phaser.Actions.IncY(this.groupB.getChildren(), -Math.sin(this.move));
+    Phaser.Actions.Rotate(this.groupB.getChildren(), 0.01);
+
+    this.move += 0.01;
   }
 
   /**
