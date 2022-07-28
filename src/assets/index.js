@@ -4,6 +4,8 @@ import starImg from './star.png';
 import platformImg from './platform.png';
 import dudeImg from './dude.png';
 import bombImg from './bomb.png';
+import vegImg from './veg.png';
+import vegJson from './veg.json';
 
 export const imgAssets = {
   logoImg,
@@ -11,5 +13,10 @@ export const imgAssets = {
   starImg,
   platformImg,
   dudeImg,
-  bombImg
+  bombImg,
+  vegImg,
+}
+
+export const jsonAssets = {
+  vegJson
 }
