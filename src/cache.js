@@ -140,23 +140,6 @@ class MyGame extends Phaser.Scene
      * 这里把四个属性：up, down, left, right植入光标(cursor)对象
      */
     this.cursors = this.input.keyboard.createCursorKeys();
-
-    /**
-     * 练习Phaser.Actions
-     */
-    const gridAlign = this.add.group({
-      key: 'dude',
-      frame: [0, 1, 2, 3, 4, 5, 6, 7 ,8], // 精灵图中有几帧
-      frameQuantity: 9, // 每个精灵重复几个帧数
-    });
-    Phaser.Actions.GridAlign(gridAlign.getChildren(), {
-      width: 9,
-      height: 9,
-      cellWidth: 32,
-      cellHeight: 48,
-      x: 100,
-      y: 100,
-    });
   }
 
   /**
