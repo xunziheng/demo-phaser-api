@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import {imgAssets} from './assets';
+import './css/index.css';
 
 class MyGame extends Phaser.Scene
 {
